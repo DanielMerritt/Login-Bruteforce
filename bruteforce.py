@@ -1,11 +1,15 @@
 import time
 import threading
+from threading import Lock
+
+PRINT_LOCK = Lock()
 
 
 def check_creds(username, password):
     # Stub to replace with authentication function
     if 0:
-        print(f"Found Credentials: {username}:{password}")
+        with PRINT_LOCK:
+            print(f"Found Credentials: {username}:{password}")
         return True
     else:
         return False
@@ -24,7 +28,9 @@ def main():
         threads = []
         for _ in range(number_of_threads):
             thread = threading.Thread(
-                target=check_creds, args=creds_to_try[current_cred_idx]
+                target=check_creds,
+                args=creds_to_try[current_cred_idx],
+                daemon=True,
             )
             thread.start()
             threads.append(thread)
